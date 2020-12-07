@@ -1,42 +1,43 @@
-export let Movies = [
-  {
-    name: "movie1",
-    score: 21,
-    id: 1,
-  },
-  {
-    name: "movie2",
-    score: 22,
-    id: 2,
-  },
-  {
-    name: "movie3",
-    score: 23,
-    id: 3,
-  },
-];
-export const getMovies = () => Movies;
+import axios from "axios";
+const BASE_URL = "https://yts.am/api/v2/";
+const LIST_MOVIES_URL = `${BASE_URL}list_movies.json?`;
+const MOVIE_DETAILS_URL = `${BASE_URL}movie_details.json?`;
+const MOVIES_SUGGESTIONS_URL = `${BASE_URL}movie_suggestions.json?`;
 
-export const getById = (id) => {
-  const filterdMovies = Movies.filter((movie) => id === movie.id);
-  return filterdMovies[0];
+export const getMovies = async (limit, rating) => {
+  const {
+    data: {
+      data: { movies },
+    },
+  } = await axios(LIST_MOVIES_URL, {
+    params: {
+      limit,
+      minimun_rating: rating,
+    },
+  });
+  return movies;
 };
-
-export const deleteMovie = (id) => {
-  const cleaneddMovies = Movies.filter((movie) => id !== movie.id);
-  if (Movies.length > cleaneddMovies.length) {
-    Movies = cleaneddMovies;
-    return true;
-  } else {
-    return false;
-  }
+export const getMovie = async (id) => {
+  const {
+    data: {
+      data: { movie },
+    },
+  } = await axios(MOVIE_DETAILS_URL, {
+    params: {
+      movie_id: id,
+    },
+  });
+  return movie;
 };
-export const addMovie = (name, score) => {
-  const newMovie = {
-    name,
-    score,
-    id: `${Movies.length + 1}`,
-  };
-  Movies.push(newMovie);
-  return newMovie;
+export const getSuggestions = async (id) => {
+  const {
+    data: {
+      data: { movies },
+    },
+  } = await axios(MOVIES_SUGGESTIONS_URL, {
+    params: {
+      movie_id: id,
+    },
+  });
+  return movies;
 };
